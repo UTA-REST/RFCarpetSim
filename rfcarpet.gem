@@ -1,0 +1,29 @@
+; this file defines the geometry of the 
+; RF carpet system in cylindrical coordinates
+
+; the world is defined in "grid units"
+; our conversion is 50 gu = 1 mm (2500 gu = 50 mm)
+pa_define(2500, 2500, 1, cylindrical)
+
+# local x0 = 2000
+# local p0 = 8
+# local w0 = 4
+# local ym = 2032
+
+; define RF electrodes starting from the outside in
+; the innermost electrode will be e(252)
+# for i=1,252 do
+#   local y0 = ym - (i-1)*p0
+    e($(i)) {
+      fill { within { box($(x0), $(y0-w0), $(x0+w0), $(y0)) } }
+    }
+# end
+
+; pad around carpet
+e(253) { fill { within { box($(x0), $(ym+500), $(x0+w0), $(ym)) } } }
+
+; ground plate at injection end
+e(254) { fill { within { box(0, 0, 10, 2500) } } }
+
+; biased plate to collect ions (2 mm think, 19.5 cm diam)
+e(255) { fill { within { box($(x0+250), 0, $(x0+300), 975) } } }
