@@ -25,11 +25,11 @@ adjustable _freqency_hz         = 13.56E6    -- RF frequency of carpet (in Hz)
                                              --   CAREFUL: time-step sizes should
                                              --   be some fraction below period.
 adjustable phase_angle_deg      = 0.0        -- entry phase angle of ion (deg)
-adjustable _RF_amplitude        = 250        -- RF peak-to-ground voltage (in V)
+adjustable _RF_amplitude        = 150        -- RF peak-to-ground voltage (in V)
 
 adjustable _DC_offset_1         = 0.0        -- DC offset of rf carpet (in V)
 adjustable _DC_push_plate       = 80.0       -- DC val of push plate at 4cm (in V)
-adjustable _DC_collection       = -250.0     -- DC val of ion collection plate (Si det)
+adjustable _DC_collection       = -150.0     -- DC val of ion collection plate (Si det)
 
 -- internal variables
 local omega                 -- frequency in radians / usec

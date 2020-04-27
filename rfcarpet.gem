@@ -25,5 +25,5 @@ e(253) { fill { within { box($(x0), $(ym+500), $(x0+w0), $(ym)) } } }
 ; ground plate at injection end
 e(254) { fill { within { box(0, 0, 10, 2500) } } }
 
-; biased plate to collect ions (2 mm think, 19.5 cm diam)
-e(255) { fill { within { box($(x0+250), 0, $(x0+300), 975) } } }
+; biased plate to collect ions (2 mm think, 2 cm diam)
+e(255) { fill { within { box($(x0+250), 0, $(x0+300), 500) } } }
