@@ -17,7 +17,8 @@ adjustable SDS_collision_gas_mass_amu = 136.0 -- Mass of background gas particle
 
 adjustable pe_update_each_usec  = 0.5        -- PE display update period (in usec)
 
-adjustable ion_time_step        = 0.0092     -- 1/8 RF period (in usec)
+adjustable _iot		        = 0.0092     -- 1/16 RF period (in usec)
+--adjustable ion_time_step	        = 0.0092     -- 1/16 RF period (in usec)
 
 -- adjustable variables at beginning of flight
 
@@ -75,5 +76,9 @@ function segment.other_actions()
         last_pe_update = ion_time_of_flight
         sim_update_pe_surface = 1    -- Request a PE surface display update.
     end
+end
+
+function segment.tstep_adjust()
+    ion_time_step = _iot
 end
 
