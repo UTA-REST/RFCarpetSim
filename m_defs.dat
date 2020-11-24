@@ -18,7 +18,5 @@
 ;	7. Blank lines are allowed
 ;	8. ; character starts comment: either line or inline
 
-; Barium-136 in xenon (no cluster)
-136,0,0.88
-; Barium-126 in xenon (with cluster)
-952,0,0.55
+; Potassium-39 in helium
+39,0,21.6
