@@ -1,9 +1,7 @@
-Rem @echo off
+REM @echo off
 
-for %%R in (25 50 75 100) do (
-    for %%E in (40 60 80 100 120 140 160 180 200) do (
-        "C:\Program Files\SIMION-8.1\simion.exe" --nogui fly --recording-output=batch_trajectories\trajectory_p01_V%%R_Ep%%E-Xe-LoK-lom --adjustable _RF_amplitude=%%R --adjustable _DC_push_plate=%%E --recording=rfcarpet.rec --markers=0.5 --retain-trajectories=0 --trajectory-quality=0 --particles=rfcarpet.fly2 rfcarpet.iob > trajout\trajectory.log
-    )
+for %%P in (15.2 30.4 45.6 60.8 76.0 91.2 106.4 121.6 136.8 152.0) do (
+  "C:\Program Files\SIMION-8.1\simion.exe" --nogui fly --recording-output=batch_trajectories\trajectory_p%%P_Vp10-KHe-Hamaker-3000-lowK0 --adjustable  SDS_pressure_torr=%%P --adjustable max_time=3000 --recording=rfcarpet.rec --markers=0.5 --retain-trajectories=0 --trajectory-quality=0 --particles=rfcarpet.fly2 rfcarpet.iob > trajout\trajectory.log
 )
 
 exit /b

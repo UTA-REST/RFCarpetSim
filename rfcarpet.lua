@@ -11,10 +11,10 @@ simion.import("collision_sds.lua")
 --simion.import("collision_hs1.lua")
 
 -- adjustable variables during flight
-adjustable min_rad_mm = 5.0
+adjustable max_time = 1E5   -- max ion time in us (1E5 us = 0.1 s)
 
 -- SDS parameters
-adjustable SDS_pressure_torr      = 106.0        -- pressure (in Torr)
+adjustable SDS_pressure_torr      = 76.0        -- pressure (in Torr)
 adjustable SDS_temperature_K      = 333.15      -- standard temp (in Kelvin)
 adjustable SDS_collision_gas_mass_amu = 4.0   -- Mass of background gas particle (Xe gas, amu)
 
@@ -26,21 +26,18 @@ adjustable SDS_collision_gas_mass_amu = 4.0   -- Mass of background gas particle
 
 adjustable pe_update_each_usec  = 5.0        -- PE display update period (in usec)
 
-adjustable ion_time_step        = 0.013     -- 1/8 RF period (in usec)
+adjustable ion_time_step        = 0.018      -- 1/8 RF period (in usec)
 
 -- adjustable variables at beginning of flight
 
-adjustable _freqency_hz         = 9.3E6    -- RF frequency of carpet (in Hz)
+adjustable _freqency_hz         = 6.8E6      -- RF frequency of carpet (in Hz)
                                              --   CAREFUL: time-step sizes should
                                              --   be some fraction below period
-adjustable _freqency_sw_hz      = 80.0E3    -- Surfing wave frequency
 adjustable phase_angle_deg      = 0.0        -- entry phase angle of ion (deg)
-adjustable _RF_amplitude        = 52         -- RF peak-to-ground voltage (in V)
-adjustable _SW_amplitude        = 2.5        -- Surfing wave p-g voltage (in V)
+adjustable _RF_amplitude        = 48         -- RF peak-to-ground voltage (in V)
 
 adjustable _DC_offset_1         = 0.0        -- DC offset of rf carpet (in V)
-adjustable _DC_push_plate       = 18.0       -- DC val of push plate at 4cm (in V)
-adjustable _DC_collection       = -10.0     -- DC val of ion collection plate (Si det)
+adjustable _DC_push_plate       = 10.0       -- DC val of push plate at 4cm (in V)
 
 -- internal variables
 local omega                 -- frequency in radians / usec
@@ -53,27 +50,21 @@ function segment.fast_adjust()
     if not theta then
         theta = phase_angle_deg * (3.141592 / 180)
         omega = _freqency_hz * 6.28318E-6
-	omega_sw = _freqency_sw_hz * 6.28318E-6
     end
 
     -- Apply RF+DC to each electrode.
-    local theta_surf = 0.0
     local rfvolts = sin(ion_time_of_flight * omega + theta) * _RF_amplitude
-    local swvolts = sin(ion_time_of_flight * omega_sw + theta - theta_surf) * _SW_amplitude
     local dcvolts = _DC_offset_1
     -- loop over RF carpet electrodes (including inner ring)
     -- (change to n=1,251 to exclude inner ring)
-    for n=1,244 do
-       theta_surf = 2.0 * 3.141592 * n / 4.0
-       swvolts = sin(ion_time_of_flight * omega_sw + theta - theta_surf) * _SW_amplitude
+    for n=1,245 do
+       adj_elect[n] = dcvolts + rfvolts
        rfvolts = -rfvolts
-       adj_elect[n] = dcvolts + rfvolts + swvolts
     end
     -- uncomment next line if defining inner electrode separately
-    adj_elect[245] = 0.0            -- DC val of innermost electrode
+    --adj_elect[245] = 1.0             -- DC val of innermost electrode
     adj_elect[246] = _DC_offset_1    -- pad around carpet set to rf carpet DC offset
     adj_elect[247] = _DC_push_plate  -- push plate at injection end
-    adj_elect[248] = _DC_collection  -- ion collection plate at -0.5 cm
 end
       
 
@@ -90,9 +81,9 @@ function segment.other_actions()
         last_pe_update = ion_time_of_flight
         sim_update_pe_surface = 1    -- Request a PE surface display update.
     end
-    -- splat particle inside radius min_radius
-    --if sqrt(ion_py_mm^2 + ion_pz_mm^2) < min_rad_mm then
-    --  ion_splat = -1
-    --end
+    -- Splat after max time
+    if ion_time_of_flight >= max_time then
+	ion_splat = -1
+    end
 end
 
